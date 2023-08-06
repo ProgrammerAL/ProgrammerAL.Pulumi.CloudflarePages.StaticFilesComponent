@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<AssemblyName>ProgrammerAL.Pulumi.CloudflarePages.StaticFilesProvider</AssemblyName>
+		<RootNamespace>ProgrammerAL.Pulumi.CloudflarePages.StaticFilesProvider</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Pulumi" Version="3.55.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="PulumiPlugin.yaml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+</Project>
