@@ -9,11 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProgrammerAL.Pulumi.CloudflarePages.StaticFilesProvider;
+namespace ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent;
 
-public class CloudflarePagesStaticFilesProvider : Provider
+public class StaticFiles
 {
-    public CloudflarePagesStaticFilesProvider()
+    public StaticFiles()
     {
     }
 }

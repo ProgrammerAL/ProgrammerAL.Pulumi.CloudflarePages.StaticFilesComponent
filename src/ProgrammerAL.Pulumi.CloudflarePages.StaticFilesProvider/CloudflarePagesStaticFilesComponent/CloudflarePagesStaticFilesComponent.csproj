@@ -6,18 +6,12 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<AssemblyName>ProgrammerAL.Pulumi.CloudflarePages.StaticFilesProvider</AssemblyName>
-		<RootNamespace>ProgrammerAL.Pulumi.CloudflarePages.StaticFilesProvider</RootNamespace>
+		<AssemblyName>ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent</AssemblyName>
+		<RootNamespace>ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Pulumi" Version="3.55.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="PulumiPlugin.yaml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>
