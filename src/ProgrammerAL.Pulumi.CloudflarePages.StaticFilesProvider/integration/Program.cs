@@ -1,14 +1,39 @@
-﻿using ProgrammerAL.Pulumi.CloudflarePages.StaticFilesProvider;
+﻿using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 
 using Pulumi;
+using Pulumi.Cloudflare;
 
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 return await Pulumi.Deployment.RunAsync(() =>
 {
-    var cloudflarePagesStaticFiles = new CloudflarePagesStaticFiles(name: "my-static-files", new CloudflarePagesStaticFilesArgs
+    var config = new Pulumi.Config();
+    var accountId = config.RequireSecret("account-id");
+    var apiToken = config.RequireSecret("api-token");
+
+    var cloudflareProvider = new Provider("my-cloudflare-provider", new ProviderArgs
+    {
+        ApiToken = apiToken
+    });
+
+    var projectName = "integration-example-project";
+    var productionBranch = "my-prod";
+    var pagesApp = new PagesProject(projectName, new PagesProjectArgs
+    {
+        Name = projectName,
+        AccountId = accountId,
+        ProductionBranch = productionBranch,
+    }, options: new CustomResourceOptions
     { 
-        
+        Provider = cloudflareProvider
+    });
+
+    var staticFiles = new StaticFiles($"{projectName}-files", new StaticFilesArgs
+    {
+        ProjectName = projectName,
+        UploadDirectory = @"C:\GitHub\ProgrammerAl\ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent\static-content",
+        Branch = productionBranch,
     });
 
     return new Dictionary<string, object?>

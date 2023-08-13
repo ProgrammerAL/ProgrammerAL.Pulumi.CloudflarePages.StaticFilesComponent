@@ -8,10 +8,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Pulumi" Version="3.*" />
+		<PackageReference Include="Pulumi.Cloudflare" Version="5.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Provider\Provider.csproj" />
+	  <ProjectReference Include="..\CloudflarePagesStaticFilesComponent\CloudflarePagesStaticFilesComponent.csproj" />
 	</ItemGroup>
 
 </Project>

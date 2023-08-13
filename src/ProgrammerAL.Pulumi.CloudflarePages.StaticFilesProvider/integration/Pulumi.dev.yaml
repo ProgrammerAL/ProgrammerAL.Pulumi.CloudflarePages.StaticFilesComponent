@@ -1,1 +1,5 @@
 config:
+  integration:account-id:
+    secure: AAABAPoaz1d+kRpt7ME1HNsfD5sZBXj8sG8QHveGKb0duv9Pb2MbNekhuETNJioMoA72ub4mJdrDMMF0y2N5BA==
+  integration:api-token:
+    secure: AAABAHot5SyV9scCJ+DgyPxswMKI46FNbAFQcbl6Ir8v9pj+iFRRvZdwrzqTCeKUhH9iXe5F18np96IZJ6OdQZgNduPRJ2xh
