@@ -39,19 +39,28 @@ public class UploadStaticFilesCommand
 
     private Output<string> GenerateDeployCommand(UploadStaticFilesCommandArgs args)
     {
-        var command = Output.Tuple(args.ProjectName, args.UploadDirectory, args.Branch).Apply(x =>
+        //Get the parameter to set for the branch
+        Input<string> branchCommandArgument = "";
+        if (args.Branch is object)
+        {
+            branchCommandArgument = args.Branch.Apply(branch =>
+            {
+                if (!string.IsNullOrWhiteSpace(branch))
+                {
+                    return $"--branch \"{branch}\" ";
+                }
+
+                return "";
+            });
+        }
+
+        var command = Output.Tuple(args.ProjectName, args.UploadDirectory).Apply(x =>
         {
             var projectName = x.Item1;
             var uploadDirectory = x.Item2;
-            var branch = x.Item3;
 
-            var branchCommandArgument = "";
-            if (!string.IsNullOrWhiteSpace(branch))
-            {
-                branchCommandArgument = $"--branch \"{branch}\" ";
-            }
-
-            return $"wrangler pages deploy --projectName \"{projectName}\" {branchCommandArgument}--commit-dirty=true \"{uploadDirectory}\"";
+            return branchCommandArgument.Apply(branch => 
+                    $"wrangler pages deploy --projectName \"{projectName}\" {branch}--commit-dirty=true \"{uploadDirectory}\"");
         });
 
         return command;

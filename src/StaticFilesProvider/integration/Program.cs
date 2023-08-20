@@ -31,7 +31,6 @@ return await Pulumi.Deployment.RunAsync(() =>
     //TODO
     //  Pass in auth variables
     //  Pass in triggers
-    //  Change Branch to optional
     //  Add properties to StaticFiles class
 
     var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
