@@ -26,7 +26,7 @@ public class StaticFilesArgs : global::Pulumi.ResourceArgs
     /// <summary>
     /// The branch to upload to
     /// </summary>
-    [Input("branch", required: true)]
+    [Input("branch")]
     public required Input<string> Branch { get; set; }
 
     [Input("environment")]

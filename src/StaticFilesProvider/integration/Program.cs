@@ -29,6 +29,12 @@ return await Pulumi.Deployment.RunAsync(() =>
         Provider = cloudflareProvider
     });
 
+    //TODO
+    //  Pass in auth variables
+    //  Pass in triggers
+    //  Change Branch to optional
+    //  Add properties to StaticFiles class
+
     var staticFiles = new StaticFiles($"{projectName}-files", new StaticFilesArgs
     {
         ProjectName = projectName,

@@ -17,13 +17,7 @@ public class StaticFiles
     {
         var internalCustomResourceOptions = MakeResourceOptions(customResourceOptions, id: "");
 
-        var command = Output.Tuple(args.ProjectName, args.UploadDirectory, args.Branch).Apply(x =>
-        {
-            var projectName = x.Item1;
-            var uploadDirectory = x.Item2;
-            var branch = x.Item3;
-            return $"wrangler pages deploy --projectName {projectName} --branch {branch} --commit-dirty=true {uploadDirectory}";
-        });
+        var command = GenerateDeployCommand(args);
 
         var triggers = GenerateTriggers(args.UploadDirectory);
 
@@ -33,8 +27,33 @@ public class StaticFiles
             Update = command,
             Environment = args.Environment,
             Triggers = triggers
-        }, 
+        },
             internalCustomResourceOptions);
+
+
+        Command = command;
+    }
+
+    public Output<string> Command { get; }
+
+    private Output<string> GenerateDeployCommand(StaticFilesArgs args)
+    {
+        var command = Output.Tuple(args.ProjectName, args.UploadDirectory, args.Branch).Apply(x =>
+        {
+            var projectName = x.Item1;
+            var uploadDirectory = x.Item2;
+            var branch = x.Item3;
+
+            var branchCommandArgument = "";
+            if (!string.IsNullOrWhiteSpace(branch))
+            {
+                branchCommandArgument = $"--branch {branch} ";
+            }
+
+            return $"wrangler pages deploy --projectName {projectName} ${branchCommandArgument} --commit-dirty=true {uploadDirectory}";
+        });
+
+        return command;
     }
 
     private InputList<object> GenerateTriggers(Input<string> path)
