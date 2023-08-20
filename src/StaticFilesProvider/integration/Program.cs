@@ -4,7 +4,6 @@ using Pulumi;
 using Pulumi.Cloudflare;
 
 using System.Collections.Generic;
-using System.Xml.Linq;
 
 return await Pulumi.Deployment.RunAsync(() =>
 {

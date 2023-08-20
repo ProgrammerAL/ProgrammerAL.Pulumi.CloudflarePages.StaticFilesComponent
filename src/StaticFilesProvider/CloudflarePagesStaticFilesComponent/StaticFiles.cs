@@ -1,4 +1,6 @@
-﻿using Pulumi;
+﻿using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Exceptions;
+
+using Pulumi;
 using Pulumi.Command.Local;
 
 using System;
@@ -30,7 +32,6 @@ public class StaticFiles
         },
             internalCustomResourceOptions);
 
-
         Command = command;
     }
 
@@ -47,10 +48,10 @@ public class StaticFiles
             var branchCommandArgument = "";
             if (!string.IsNullOrWhiteSpace(branch))
             {
-                branchCommandArgument = $"--branch {branch} ";
+                branchCommandArgument = $"--branch \"{branch}\" ";
             }
 
-            return $"wrangler pages deploy --projectName {projectName} ${branchCommandArgument} --commit-dirty=true {uploadDirectory}";
+            return $"wrangler pages deploy --projectName \"{projectName}\" {branchCommandArgument}--commit-dirty=true \"{uploadDirectory}\"";
         });
 
         return command;
@@ -61,6 +62,12 @@ public class StaticFiles
         return path.Apply(x =>
         {
             var dirPath = x;
+
+            if (!Directory.Exists(dirPath))
+            {
+                throw new DirectoryDoesNotExistException($"Directory does not exist at path: {path}");
+            }
+
             var staticFilesChecksums = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories)
             .OrderBy(fileName => fileName)
             .Select(fileName =>
