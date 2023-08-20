@@ -34,7 +34,7 @@ return await Pulumi.Deployment.RunAsync(() =>
     //  Change Branch to optional
     //  Add properties to StaticFiles class
 
-    var staticFiles = new StaticFiles($"{projectName}-files", new StaticFilesArgs
+    var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
     {
         ProjectName = projectName,
         UploadDirectory = @"C:\GitHub\ProgrammerAl\ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent\static-content",

@@ -9,7 +9,7 @@ public class HappyPathStack : Stack
     public HappyPathStack()
     {
         _ = Directory.CreateDirectory(@"./files");
-        _ = new StaticFiles($"test-files", new StaticFilesArgs
+        _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
         {
             ProjectName = "test-files",
             UploadDirectory = @"./files",

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 
-public class StaticFilesArgs : global::Pulumi.ResourceArgs
+public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
 {
     /// <summary>
     /// The name of the Cloudflare Pages project to upload files to.

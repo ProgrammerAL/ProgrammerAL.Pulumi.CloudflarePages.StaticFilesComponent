@@ -9,7 +9,7 @@ using UnitTests.Utilities;
 
 namespace UnitTests;
 
-public class StaticFilesTests
+public class UploadStaticFilesCommandTests
 {
     [Fact]
     public async Task WhenCreatingInstance_AssertCommand()

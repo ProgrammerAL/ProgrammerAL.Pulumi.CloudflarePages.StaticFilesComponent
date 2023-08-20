@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 
-public class StaticFiles
+public class UploadStaticFilesCommand
 {
-    public StaticFiles(string name, StaticFilesArgs args, CustomResourceOptions? customResourceOptions = null)
+    public UploadStaticFilesCommand(string name, UploadStaticFilesCommandArgs args, CustomResourceOptions? customResourceOptions = null)
     {
         var internalCustomResourceOptions = MakeResourceOptions(customResourceOptions, id: "");
 
@@ -37,7 +37,7 @@ public class StaticFiles
 
     public Output<string> Command { get; }
 
-    private Output<string> GenerateDeployCommand(StaticFilesArgs args)
+    private Output<string> GenerateDeployCommand(UploadStaticFilesCommandArgs args)
     {
         var command = Output.Tuple(args.ProjectName, args.UploadDirectory, args.Branch).Apply(x =>
         {
