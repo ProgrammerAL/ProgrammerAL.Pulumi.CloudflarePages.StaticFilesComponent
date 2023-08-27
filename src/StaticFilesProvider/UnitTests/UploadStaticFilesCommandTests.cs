@@ -51,4 +51,18 @@ public class UploadStaticFilesCommandTests
         var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
         create.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
     }
+
+    [Fact]
+    public async Task WhenCreatingInstanceWithAuth_AssertAuthUsedAsEnvironmentVariables()
+    {
+        var resources = await Testing.RunAsync<HappyPathWithAuthStack>();
+
+        var staticFiles = resources.OfType<Command>().Single();
+        var environmentResult = await OutputUtilities.GetValueAsync(staticFiles.Environment);
+
+        var environment = environmentResult.ShouldNotBeNull();
+        environment.Count.ShouldBe(2);
+        environment.Single(x => x.Key == "CLOUDFLARE_ACCOUNT_ID").Value.ShouldBe("1234567890");
+        environment.Single(x => x.Key == "CLOUDFLARE_API_TOKEN").Value.ShouldBe("555");
+    }
 }

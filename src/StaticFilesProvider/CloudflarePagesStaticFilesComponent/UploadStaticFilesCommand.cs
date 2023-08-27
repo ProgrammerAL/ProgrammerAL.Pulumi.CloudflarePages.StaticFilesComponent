@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,19 +21,34 @@ public class UploadStaticFilesCommand
         var internalCustomResourceOptions = MakeResourceOptions(customResourceOptions, id: "");
 
         var command = GenerateDeployCommand(args);
-
         var triggers = GenerateTriggers(args.UploadDirectory);
+        var environmentVariables = GenerateEnvironmentVariables(args);
 
         _ = new Command(name, new CommandArgs
         {
             Create = command,
             Update = command,
-            Environment = args.Environment,
+            Environment = environmentVariables,
             Triggers = triggers
         },
             internalCustomResourceOptions);
 
         Command = command;
+    }
+
+    private InputMap<string> GenerateEnvironmentVariables(UploadStaticFilesCommandArgs args)
+    {
+        var map = args.Environment;
+        if (args.Authentication is object)
+        {
+            var accountId = args.Authentication.Apply(auth => auth.AccountId);
+            var apiToken = args.Authentication.Apply(auth => auth.ApiToken);
+
+            map.Add("CLOUDFLARE_ACCOUNT_ID", accountId);
+            map.Add("CLOUDFLARE_API_TOKEN", apiToken);
+        }
+
+        return map;
     }
 
     public Output<string> Command { get; }

@@ -1,4 +1,6 @@
-﻿using Pulumi;
+﻿using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Inputs;
+
+using Pulumi;
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,8 @@ namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 
 public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
 {
+    private InputMap<string>? _environment;
+
     /// <summary>
     /// The name of the Cloudflare Pages project to upload files to.
     /// </summary>
@@ -29,15 +33,20 @@ public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
     [Input("branch")]
     public Input<string?>? Branch { get; set; }
 
-    [Input("environment")]
-    private InputMap<string>? _environment;
-
     /// <summary>
     /// Additional environment variables available to the command's process.
     /// </summary>
+    [Input("environment")]
     public InputMap<string> Environment
     {
         get => _environment ?? (_environment = new InputMap<string>());
         set => _environment = value;
     }
+
+    /// <summary>
+    /// The authentication to use for running the command. 
+    /// This is required if wrangler is not already logged in.
+    /// </summary>
+    [Input("authentication")]
+    public Input<WranglerAuthenticationInput>? Authentication { get; set; }
 }

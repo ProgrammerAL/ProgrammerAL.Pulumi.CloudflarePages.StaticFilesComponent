@@ -1,4 +1,5 @@
 using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
+using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Inputs;
 
 using Pulumi;
 
@@ -43,6 +44,25 @@ public class TestValueBranchStack : Stack
             ProjectName = "test-files",
             UploadDirectory = @"./files",
             Branch = TestValues.Branch
+        });
+    }
+}
+
+public class HappyPathWithAuthStack : Stack
+{
+    public HappyPathWithAuthStack()
+    {
+        _ = Directory.CreateDirectory(@"./files");
+        _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+        {
+            ProjectName = "test-files",
+            UploadDirectory = @"./files",
+            Branch = "my-branch",
+            Authentication = new WranglerAuthenticationInput
+            {
+                AccountId = "1234567890",
+                ApiToken = "555"
+            }
         });
     }
 }
