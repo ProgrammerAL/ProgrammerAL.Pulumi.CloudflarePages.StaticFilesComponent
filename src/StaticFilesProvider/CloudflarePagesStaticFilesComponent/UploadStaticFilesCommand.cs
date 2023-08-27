@@ -21,7 +21,7 @@ public class UploadStaticFilesCommand
         var internalCustomResourceOptions = MakeResourceOptions(customResourceOptions, id: "");
 
         var command = GenerateDeployCommand(args);
-        var triggers = GenerateTriggers(args.UploadDirectory);
+        var triggers = GenerateTriggers(args);
         var environmentVariables = GenerateEnvironmentVariables(args);
 
         _ = new Command(name, new CommandArgs
@@ -75,22 +75,22 @@ public class UploadStaticFilesCommand
             var projectName = x.Item1;
             var uploadDirectory = x.Item2;
 
-            return branchCommandArgument.Apply(branch => 
+            return branchCommandArgument.Apply(branch =>
                     $"wrangler pages deploy --projectName \"{projectName}\" {branch}--commit-dirty=true \"{uploadDirectory}\"");
         });
 
         return command;
     }
 
-    private InputList<object> GenerateTriggers(Input<string> path)
+    private InputList<object> GenerateTriggers(UploadStaticFilesCommandArgs args)
     {
-        return path.Apply(x =>
+        var pathTriggers = args.UploadDirectory.Apply(x =>
         {
             var dirPath = x;
 
             if (!Directory.Exists(dirPath))
             {
-                throw new DirectoryDoesNotExistException($"Directory does not exist at path: {path}");
+                throw new DirectoryDoesNotExistException($"Directory does not exist at path: {dirPath}");
             }
 
             var staticFilesChecksums = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories)
@@ -105,6 +105,11 @@ public class UploadStaticFilesCommand
 
             return staticFilesChecksums;
         });
+
+        var inputTriggers = args.Triggers;
+
+        inputTriggers.AddRange(pathTriggers);
+        return inputTriggers;
     }
 
     private static CustomResourceOptions MakeResourceOptions(CustomResourceOptions? options, Input<string>? id)

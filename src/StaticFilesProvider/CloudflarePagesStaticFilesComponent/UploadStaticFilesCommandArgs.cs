@@ -13,8 +13,6 @@ namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 
 public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
 {
-    private InputMap<string>? _environment;
-
     /// <summary>
     /// The name of the Cloudflare Pages project to upload files to.
     /// </summary>
@@ -33,10 +31,12 @@ public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
     [Input("branch")]
     public Input<string?>? Branch { get; set; }
 
+    [Input("environment")]
+    private InputMap<string>? _environment;
+
     /// <summary>
     /// Additional environment variables available to the command's process.
     /// </summary>
-    [Input("environment")]
     public InputMap<string> Environment
     {
         get => _environment ?? (_environment = new InputMap<string>());
@@ -49,4 +49,16 @@ public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
     /// </summary>
     [Input("authentication")]
     public Input<WranglerAuthenticationInput>? Authentication { get; set; }
+
+    [Input("triggers")]
+    private InputList<object>? _triggers;
+
+    /// <summary>
+    /// Trigger replacements on changes to this input.
+    /// </summary>
+    public InputList<object> Triggers
+    {
+        get => _triggers ?? (_triggers = new InputList<object>());
+        set => _triggers = value;
+    }
 }

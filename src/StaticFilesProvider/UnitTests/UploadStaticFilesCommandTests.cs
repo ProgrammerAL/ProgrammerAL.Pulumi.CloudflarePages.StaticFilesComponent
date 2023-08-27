@@ -1,4 +1,5 @@
 using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
+using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Exceptions;
 
 using Pulumi.Command.Local;
 using Pulumi.Utilities;
@@ -12,7 +13,7 @@ namespace UnitTests;
 public class UploadStaticFilesCommandTests
 {
     public UploadStaticFilesCommandTests()
-    { 
+    {
         TestValues.Reset();
     }
 
@@ -23,7 +24,15 @@ public class UploadStaticFilesCommandTests
 
         var staticFiles = resources.OfType<Command>().Single();
         var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
+        var triggers = await OutputUtilities.GetValueAsync(staticFiles.Triggers);
+
         create.ShouldBe("wrangler pages deploy --projectName \"test-files\" --branch \"my-branch\" --commit-dirty=true \"./files\"");
+
+        //Triggers will be 4. 3 for the custom ones we added, plus 1 for each file in the directory (which is only 1)
+        triggers.Length.ShouldBe(4);
+        triggers.ShouldContain("my-trigger-1");
+        triggers.ShouldContain("my-trigger-2");
+        triggers.ShouldContain("my-trigger-3");
     }
 
     [Fact]
@@ -64,5 +73,13 @@ public class UploadStaticFilesCommandTests
         environment.Count.ShouldBe(2);
         environment.Single(x => x.Key == "CLOUDFLARE_ACCOUNT_ID").Value.ShouldBe("1234567890");
         environment.Single(x => x.Key == "CLOUDFLARE_API_TOKEN").Value.ShouldBe("555");
+    }
+
+    [Fact]
+    public async Task WhenUploadDirectoryDoesNotExist_AssertError()
+    {
+        var ex = await Should.ThrowAsync<Exception>(async () => await Testing.RunAsync<UploadPathDoesNotExistStack>());
+        var message = ex.Message;
+        message.ShouldContain(typeof(DirectoryDoesNotExistException).FullName);
     }
 }

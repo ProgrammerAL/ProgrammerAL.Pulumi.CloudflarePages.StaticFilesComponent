@@ -12,11 +12,14 @@ public class HappyPathStack : Stack
     public HappyPathStack()
     {
         _ = Directory.CreateDirectory(@"./files");
+        File.Copy(@"./static-content/index.html", @"./files/index.html", overwrite: true);
+
         _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
         {
             ProjectName = "test-files",
             UploadDirectory = @"./files",
             Branch = "my-branch",
+            Triggers = new[] { "my-trigger-1", "my-trigger-2", "my-trigger-3" }
         });
     }
 }
@@ -63,6 +66,20 @@ public class HappyPathWithAuthStack : Stack
                 AccountId = "1234567890",
                 ApiToken = "555"
             }
+        });
+    }
+}
+
+public class UploadPathDoesNotExistStack : Stack
+{
+    public UploadPathDoesNotExistStack()
+    {
+        _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+        {
+            ProjectName = "test-files",
+            UploadDirectory = @"./this-path-does-not-exist",
+            Branch = "my-branch",
+            Triggers = new[] { "my-trigger-1", "my-trigger-2", "my-trigger-3" }
         });
     }
 }
