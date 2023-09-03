@@ -1,26 +1,58 @@
+using NSubstitute;
+
 using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Exceptions;
+using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Inputs;
 
+using Pulumi;
 using Pulumi.Command.Local;
+using Pulumi.Testing;
 using Pulumi.Utilities;
 
 using Shouldly;
-
-using UnitTests.Utilities;
 
 namespace UnitTests;
 
 public class UploadStaticFilesCommandTests
 {
+    private readonly IMocks _pulumiMocks;
+
     public UploadStaticFilesCommandTests()
     {
-        TestValues.Reset();
+        _pulumiMocks = Substitute.For<IMocks>();
+        _ = _pulumiMocks.NewResourceAsync(default!)
+            .ReturnsForAnyArgs(x =>
+            {
+                var args = x[0] as MockResourceArgs;
+                var result = (args.Id ?? "", args.Inputs);
+                return Task.FromResult<(string?, object)>(result);
+            });
+
+        _ = _pulumiMocks.CallAsync(default!)
+            .ReturnsForAnyArgs(x =>
+            {
+                var args = x[0] as MockCallArgs;
+                var result = args.Args;
+                return Task.FromResult(result);
+            });
     }
 
     [Fact]
     public async Task WhenCreatingInstance_AssertCommand()
     {
-        var resources = await Testing.RunAsync<HappyPathStack>();
+        var resources = await Deployment.TestAsync(_pulumiMocks, new TestOptions { IsPreview = false }, () =>
+        {
+            _ = Directory.CreateDirectory(@"./files");
+            File.Copy(@"./static-content/index.html", @"./files/index.html", overwrite: true);
+
+            _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+            {
+                ProjectName = "test-files",
+                UploadDirectory = @"./files",
+                Branch = "my-branch",
+                Triggers = new[] { "my-trigger-1", "my-trigger-2", "my-trigger-3" }
+            });
+        });
 
         var staticFiles = resources.OfType<Command>().Single();
         var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
@@ -36,9 +68,18 @@ public class UploadStaticFilesCommandTests
     }
 
     [Fact]
-    public async Task WhenCreatingInstanceWithNoBranch_AssertCommand()
+    public async Task WhenCreatingInstanceWithBranchNotSet_AssertCommand()
     {
-        var resources = await Testing.RunAsync<NoBranchStack>();
+        var resources = await Deployment.TestAsync(_pulumiMocks, new TestOptions { IsPreview = false }, () =>
+        {
+            _ = Directory.CreateDirectory(@"./files");
+            _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+            {
+                ProjectName = "test-files",
+                UploadDirectory = @"./files",
+                //Branch = ""//This is what we're testing, the Branch property not being set
+            });
+        });
 
         var staticFiles = resources.OfType<Command>().Single();
         var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
@@ -53,8 +94,16 @@ public class UploadStaticFilesCommandTests
     [InlineData("\t")]
     public async Task WhenCreatingInstanceWithEmptyBranch_AssertCommand(string? branch)
     {
-        TestValues.Branch = branch;
-        var resources = await Testing.RunAsync<TestValueBranchStack>();
+        var resources = await Deployment.TestAsync(_pulumiMocks, new TestOptions { IsPreview = false }, () =>
+        {
+            _ = Directory.CreateDirectory(@"./files");
+            _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+            {
+                ProjectName = "test-files",
+                UploadDirectory = @"./files",
+                Branch = branch
+            });
+        });
 
         var staticFiles = resources.OfType<Command>().Single();
         var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
@@ -64,7 +113,21 @@ public class UploadStaticFilesCommandTests
     [Fact]
     public async Task WhenCreatingInstanceWithAuth_AssertAuthUsedAsEnvironmentVariables()
     {
-        var resources = await Testing.RunAsync<HappyPathWithAuthStack>();
+        var resources = await Deployment.TestAsync(_pulumiMocks, new TestOptions { IsPreview = false }, () =>
+        {
+            _ = Directory.CreateDirectory(@"./files");
+            _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+            {
+                ProjectName = "test-files",
+                UploadDirectory = @"./files",
+                Branch = "my-branch",
+                Authentication = new WranglerAuthenticationInput
+                {
+                    AccountId = "1234567890",
+                    ApiToken = "555"
+                }
+            });
+        });
 
         var staticFiles = resources.OfType<Command>().Single();
         var environmentResult = await OutputUtilities.GetValueAsync(staticFiles.Environment);
@@ -78,8 +141,20 @@ public class UploadStaticFilesCommandTests
     [Fact]
     public async Task WhenUploadDirectoryDoesNotExist_AssertError()
     {
-        var ex = await Should.ThrowAsync<Exception>(async () => await Testing.RunAsync<UploadPathDoesNotExistStack>());
+        var ex = await Should.ThrowAsync<Exception>(async () => {
+            var resources = await Deployment.TestAsync(_pulumiMocks, new TestOptions { IsPreview = false }, () =>
+            {
+                _ = new UploadStaticFilesCommand($"test-files", new UploadStaticFilesCommandArgs
+                {
+                    ProjectName = "test-files",
+                    UploadDirectory = @"./this-path-does-not-exist",
+                    Branch = "my-branch",
+                    Triggers = new[] { "my-trigger-1", "my-trigger-2", "my-trigger-3" }
+                });
+            });
+        });
+
         var message = ex.Message;
-        message.ShouldContain(typeof(DirectoryDoesNotExistException).FullName);
+        message.ShouldContain(typeof(DirectoryDoesNotExistException).FullName!);
     }
 }

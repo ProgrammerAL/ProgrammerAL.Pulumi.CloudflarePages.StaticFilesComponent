@@ -29,8 +29,8 @@ return await Pulumi.Deployment.RunAsync(() =>
     });
 
     //  Add properties to UploadStaticFilesCommand class
-    //TODO
     //  Fix the unit tests, get rid of that thing I don't like
+    //TODO
     //  Experiment with using the Command Provider, but not the Comand Resource. Use own own resource instead.
 
     var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
