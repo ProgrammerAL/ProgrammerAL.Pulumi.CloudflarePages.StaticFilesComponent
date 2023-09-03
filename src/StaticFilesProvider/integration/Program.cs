@@ -28,11 +28,10 @@ return await Pulumi.Deployment.RunAsync(() =>
         Provider = cloudflareProvider
     });
 
-    //  Pass in auth variables
-    //  Pass in triggers
+    //  Add properties to UploadStaticFilesCommand class
     //TODO
-    //  Add properties to StaticFiles class
     //  Fix the unit tests, get rid of that thing I don't like
+    //  Experiment with using the Command Provider, but not the Comand Resource. Use own own resource instead.
 
     var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
     {

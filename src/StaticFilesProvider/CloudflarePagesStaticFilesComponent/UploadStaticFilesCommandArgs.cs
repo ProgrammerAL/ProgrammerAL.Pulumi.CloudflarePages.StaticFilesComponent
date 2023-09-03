@@ -5,6 +5,7 @@ using Pulumi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,4 +62,10 @@ public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
         get => _triggers ?? (_triggers = new InputList<object>());
         set => _triggers = value;
     }
+
+    /// <summary>
+    /// The directory to run the command from. If the directory does not exist, then an error will be thrown.
+    /// </summary>
+    [Input("workingDirectory")]
+    public Input<string>? WorkingDirectory { get; set; }
 }

@@ -20,21 +20,64 @@ public class UploadStaticFilesCommand
     {
         var internalCustomResourceOptions = MakeResourceOptions(customResourceOptions, id: "");
 
-        var command = GenerateDeployCommand(args);
+        var commandString = GenerateDeployCommand(args);
         var triggers = GenerateTriggers(args);
         var environmentVariables = GenerateEnvironmentVariables(args);
 
-        _ = new Command(name, new CommandArgs
+        var commandResource = new Command(name, new CommandArgs
         {
-            Create = command,
-            Update = command,
+            Create = commandString,
+            Update = commandString,
             Environment = environmentVariables,
-            Triggers = triggers
+            Triggers = triggers,
+            Dir = args.WorkingDirectory
         },
-            internalCustomResourceOptions);
+        internalCustomResourceOptions);
 
-        Command = command;
+        Command = commandString;
+        Environment = commandResource.Environment;
+        WorkingDirectory = commandResource.Dir;
+        Stderr = commandResource.Stderr;
+        Stdin = commandResource.Stdin;
+        Stdout = commandResource.Stdout;
     }
+
+    /// <summary>
+    /// The command that is run when creating or updating the static files uploaded to the Cloudflare Pages project
+    /// </summary>
+    [Output("command")]
+    public Output<string> Command { get; }
+
+    /// <summary>
+    /// The environment variables to use when running the command
+    /// </summary>
+    [Output("environment")]
+    public Output<ImmutableDictionary<string, string>?> Environment { get; }
+
+    /// <summary>
+    /// The directory from which to run the command from. If `dir` does not exist, then
+    /// `Command` will fail.
+    /// </summary>
+    [Output("workingDirectory")]
+    public Output<string?> WorkingDirectory { get; }
+
+    /// <summary>
+    /// The standard error of the command's process
+    /// </summary>
+    [Output("stderr")]
+    public Output<string> Stderr { get; }
+
+    /// <summary>
+    /// Pass a string to the command's process as standard in
+    /// </summary>
+    [Output("stdin")]
+    public Output<string?> Stdin { get; }
+
+    /// <summary>
+    /// The standard output of the command's process
+    /// </summary>
+    [Output("stdout")]
+    public Output<string> Stdout { get; }
 
     private InputMap<string> GenerateEnvironmentVariables(UploadStaticFilesCommandArgs args)
     {
@@ -50,8 +93,6 @@ public class UploadStaticFilesCommand
 
         return map;
     }
-
-    public Output<string> Command { get; }
 
     private Output<string> GenerateDeployCommand(UploadStaticFilesCommandArgs args)
     {
