@@ -14,17 +14,16 @@ using System.Threading.Tasks;
 
 namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
 
-public class UploadStaticFilesCommand
+public class UploadStaticFilesCommand : ComponentResource
 {
-    public UploadStaticFilesCommand(string name, UploadStaticFilesCommandArgs args, CustomResourceOptions? customResourceOptions = null)
+    public UploadStaticFilesCommand(string name, UploadStaticFilesCommandArgs args, ComponentResourceOptions? componentResourceOptions = null)
+        : base("programmeral:cloudflare:pagesproject:StaticFiles", name, componentResourceOptions)
     {
-        var internalCustomResourceOptions = MakeResourceOptions(customResourceOptions, id: "");
-
         var commandString = GenerateDeployCommand(args);
         var triggers = GenerateTriggers(args);
         var environmentVariables = GenerateEnvironmentVariables(args);
 
-        var commandResource = new Command(name, new CommandArgs
+        var commandResource = new Command($"{name}-upload-files-command", new CommandArgs
         {
             Create = commandString,
             Update = commandString,
@@ -32,7 +31,10 @@ public class UploadStaticFilesCommand
             Triggers = triggers,
             Dir = args.WorkingDirectory
         },
-        internalCustomResourceOptions);
+        new CustomResourceOptions
+        {
+            Parent = this
+        });
 
         Command = commandString;
         Environment = commandResource.Environment;
@@ -40,44 +42,46 @@ public class UploadStaticFilesCommand
         Stderr = commandResource.Stderr;
         Stdin = commandResource.Stdin;
         Stdout = commandResource.Stdout;
+
+        RegisterOutputs();
     }
 
     /// <summary>
     /// The command that is run when creating or updating the static files uploaded to the Cloudflare Pages project
     /// </summary>
     [Output("command")]
-    public Output<string> Command { get; }
+    public Output<string> Command { get; private set; }
 
     /// <summary>
     /// The environment variables to use when running the command
     /// </summary>
     [Output("environment")]
-    public Output<ImmutableDictionary<string, string>?> Environment { get; }
+    public Output<ImmutableDictionary<string, string>?> Environment { get; private set; }
 
     /// <summary>
     /// The directory from which to run the command from. If `dir` does not exist, then
     /// `Command` will fail.
     /// </summary>
     [Output("workingDirectory")]
-    public Output<string?> WorkingDirectory { get; }
+    public Output<string?> WorkingDirectory { get; private set; }
 
     /// <summary>
     /// The standard error of the command's process
     /// </summary>
     [Output("stderr")]
-    public Output<string> Stderr { get; }
+    public Output<string> Stderr { get; private set; }
 
     /// <summary>
     /// Pass a string to the command's process as standard in
     /// </summary>
     [Output("stdin")]
-    public Output<string?> Stdin { get; }
+    public Output<string?> Stdin { get; private set; }
 
     /// <summary>
     /// The standard output of the command's process
     /// </summary>
     [Output("stdout")]
-    public Output<string> Stdout { get; }
+    public Output<string> Stdout { get; private set; }
 
     private InputMap<string> GenerateEnvironmentVariables(UploadStaticFilesCommandArgs args)
     {
@@ -151,18 +155,5 @@ public class UploadStaticFilesCommand
 
         inputTriggers.AddRange(pathTriggers);
         return inputTriggers;
-    }
-
-    private static CustomResourceOptions MakeResourceOptions(CustomResourceOptions? options, Input<string>? id)
-    {
-        var defaultOptions = new CustomResourceOptions
-        {
-            //TODO: Fill this in
-            //Version = Pulumi.Utilities.Version,
-        };
-        var merged = CustomResourceOptions.Merge(defaultOptions, options);
-        // Override the ID if one was specified for consistency with other language SDKs.
-        merged.Id = id ?? merged.Id;
-        return merged;
     }
 }

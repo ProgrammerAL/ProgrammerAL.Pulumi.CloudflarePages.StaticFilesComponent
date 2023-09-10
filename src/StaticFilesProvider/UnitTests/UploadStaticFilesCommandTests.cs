@@ -81,9 +81,13 @@ public class UploadStaticFilesCommandTests
             });
         });
 
-        var staticFiles = resources.OfType<Command>().Single();
-        var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
-        create.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
+        var command = resources.OfType<Command>().Single();
+        var createCommand = await OutputUtilities.GetValueAsync(command.Create);
+        createCommand.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
+
+        var uploadComponent = resources.OfType<UploadStaticFilesCommand>().Single();
+        var uploadCommand = await OutputUtilities.GetValueAsync(uploadComponent.Command);
+        uploadCommand.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
     }
 
     [Theory]
@@ -105,9 +109,13 @@ public class UploadStaticFilesCommandTests
             });
         });
 
-        var staticFiles = resources.OfType<Command>().Single();
-        var create = await OutputUtilities.GetValueAsync(staticFiles.Create);
-        create.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
+        var command = resources.OfType<Command>().Single();
+        var createCommand = await OutputUtilities.GetValueAsync(command.Create);
+        createCommand.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
+
+        var uploadComponent = resources.OfType<UploadStaticFilesCommand>().Single();
+        var uploadCommand = await OutputUtilities.GetValueAsync(uploadComponent.Command);
+        uploadCommand.ShouldBe("wrangler pages deploy --projectName \"test-files\" --commit-dirty=true \"./files\"");
     }
 
     [Fact]
@@ -129,13 +137,21 @@ public class UploadStaticFilesCommandTests
             });
         });
 
-        var staticFiles = resources.OfType<Command>().Single();
-        var environmentResult = await OutputUtilities.GetValueAsync(staticFiles.Environment);
+        var command = resources.OfType<Command>().Single();
+        var commandEnvironmentValue = await OutputUtilities.GetValueAsync(command.Environment);
 
-        var environment = environmentResult.ShouldNotBeNull();
+        var environment = commandEnvironmentValue.ShouldNotBeNull();
         environment.Count.ShouldBe(2);
         environment.Single(x => x.Key == "CLOUDFLARE_ACCOUNT_ID").Value.ShouldBe("1234567890");
         environment.Single(x => x.Key == "CLOUDFLARE_API_TOKEN").Value.ShouldBe("555");
+
+        var component = resources.OfType<UploadStaticFilesCommand>().Single();
+        var componentEnvironmentValue = await OutputUtilities.GetValueAsync(component.Environment);
+
+        var componentEnvironment = componentEnvironmentValue.ShouldNotBeNull();
+        componentEnvironment.Count.ShouldBe(2);
+        componentEnvironment.Single(x => x.Key == "CLOUDFLARE_ACCOUNT_ID").Value.ShouldBe("1234567890");
+        componentEnvironment.Single(x => x.Key == "CLOUDFLARE_API_TOKEN").Value.ShouldBe("555");
     }
 
     [Fact]

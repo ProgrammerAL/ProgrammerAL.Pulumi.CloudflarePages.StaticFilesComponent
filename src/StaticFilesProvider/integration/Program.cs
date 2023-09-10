@@ -28,19 +28,15 @@ return await Pulumi.Deployment.RunAsync(() =>
         Provider = cloudflareProvider
     });
 
-    //  Add properties to UploadStaticFilesCommand class
-    //  Fix the unit tests, get rid of that thing I don't like
-    //TODO
-    //  Experiment with using the Command Provider, but not the Comand Resource. Use own own resource instead.
-
     var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
     {
-        ProjectName = projectName,
-        UploadDirectory = @"C:\GitHub\ProgrammerAl\ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent\static-content",
+        ProjectName = pagesApp.Name,
+        UploadDirectory = @"C:\GitHub\ProgrammerAl\ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent\static-content 2",
         Branch = productionBranch,
     });
 
     return new Dictionary<string, object?>
     {
+        { "UploadResult", staticFiles.Stdout }
     };
 });
