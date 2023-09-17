@@ -108,20 +108,23 @@ public class UploadStaticFilesCommand : ComponentResource
             {
                 if (!string.IsNullOrWhiteSpace(branch))
                 {
-                    return $"--branch \"{branch}\" ";
+                    return $"--branch {branch} ";
                 }
 
                 return "";
             });
         }
 
-        var command = Output.Tuple(args.ProjectName, args.UploadDirectory).Apply(x =>
+        var command = Output.Tuple(args.ProjectName, args.UploadDirectory, branchCommandArgument).Apply(x =>
         {
             var projectName = x.Item1;
             var uploadDirectory = x.Item2;
+            var branch = x.Item3;
 
-            return branchCommandArgument.Apply(branch =>
-                    $"wrangler pages deploy --projectName \"{projectName}\" {branch}--commit-dirty=true \"{uploadDirectory}\"");
+            //_ = Debugger.Launch();
+
+            var aaa = $@"wrangler pages deploy --projectName {projectName} {branch}--commit-dirty=true --directory ""{uploadDirectory}""";
+            return aaa;
         });
 
         return command;
@@ -129,7 +132,9 @@ public class UploadStaticFilesCommand : ComponentResource
 
     private InputList<object> GenerateTriggers(UploadStaticFilesCommandArgs args)
     {
-        var pathTriggers = args.UploadDirectory.Apply(x =>
+        var fullUploadPath = DetermineFullUploadDirectoryPath(args);
+
+        var pathTriggers = fullUploadPath.Apply(x =>
         {
             var dirPath = x;
 
@@ -155,5 +160,27 @@ public class UploadStaticFilesCommand : ComponentResource
 
         inputTriggers.AddRange(pathTriggers);
         return inputTriggers;
+    }
+
+    private static Output<string> DetermineFullUploadDirectoryPath(UploadStaticFilesCommandArgs args)
+    {
+        var workingDirectoryInput = args.WorkingDirectory ?? "";
+
+        var fullUploadPath = Output.Tuple(workingDirectoryInput, args.UploadDirectory).Apply(x =>
+        {
+            var workingDirectory = x.Item1;
+            var uploadDirectory = x.Item2;
+
+            if (string.IsNullOrWhiteSpace(workingDirectory))
+            {
+                return uploadDirectory;
+            }
+            else
+            {
+                return Path.Combine(workingDirectory, uploadDirectory);
+            }
+        });
+
+        return fullUploadPath;
     }
 }

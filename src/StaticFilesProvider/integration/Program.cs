@@ -31,7 +31,8 @@ return await Pulumi.Deployment.RunAsync(() =>
     var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
     {
         ProjectName = pagesApp.Name,
-        UploadDirectory = @"C:\GitHub\ProgrammerAl\ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent\static-content 2",
+        UploadDirectory = "static-content 2",
+        WorkingDirectory = @"C:/GitHub/ProgrammerAl/ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent/",
         Branch = productionBranch,
     });
 
