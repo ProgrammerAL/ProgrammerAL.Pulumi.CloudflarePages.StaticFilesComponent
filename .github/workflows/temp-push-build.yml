@@ -22,6 +22,6 @@ jobs:
         with:
           node-version: 20.x
       - run: npm install -g wrangler
-      - run: dotnet run ${{ github.workspace }}/temp/ProcessUploaderPractice/ProcessUploaderPractice/ProcessUploaderPractice.csproj
+      - run: dotnet run --project ${{ github.workspace }}/temp/ProcessUploaderPractice/ProcessUploaderPractice/ProcessUploaderPractice.csproj
           
 
