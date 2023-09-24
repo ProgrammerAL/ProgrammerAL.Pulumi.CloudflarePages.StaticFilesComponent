@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    env:
+      SRC_DIRECTORY_PATH: ${{ github.workspace }}/src/
+      
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            7.x.x
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+      - run: npm install -g wrangler
+      - run: dotnet run ${{ github.workspace }}/temp/ProcessUploaderPractice/ProcessUploaderPractice/ProcessUploaderPractice.csproj
+          
+
