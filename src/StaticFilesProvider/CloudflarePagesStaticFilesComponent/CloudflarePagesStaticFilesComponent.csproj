@@ -14,4 +14,8 @@
 	  <PackageReference Include="Pulumi.Command" Version="0.9.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Provider\Provider.csproj" />
+	</ItemGroup>
+
 </Project>

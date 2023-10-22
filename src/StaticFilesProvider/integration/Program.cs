@@ -28,13 +28,13 @@ return await Pulumi.Deployment.RunAsync(() =>
         Provider = cloudflareProvider
     });
 
-    //var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
-    //{
-    //    ProjectName = pagesApp.Name,
-    //    UploadDirectory = "static-content 2",
-    //    WorkingDirectory = @"C:/GitHub/ProgrammerAl/ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent/",
-    //    Branch = productionBranch,
-    //});
+    var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
+    {
+        ProjectName = pagesApp.Name,
+        UploadDirectory = "static-content 2",
+        WorkingDirectory = @"C:/GitHub/ProgrammerAl/ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent/",
+        Branch = productionBranch,
+    });
 
     //return new Dictionary<string, object?>
     //{
