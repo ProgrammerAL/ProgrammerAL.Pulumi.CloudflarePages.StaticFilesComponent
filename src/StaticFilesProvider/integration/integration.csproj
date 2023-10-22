@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Pulumi" Version="3.56.2" />
-		<PackageReference Include="Pulumi.Cloudflare" Version="5.10.0" />
+		<PackageReference Include="Pulumi" Version="3.57.0" />
+		<PackageReference Include="Pulumi.Cloudflare" Version="5.13.0" />
 	</ItemGroup>
 
 	<ItemGroup>
