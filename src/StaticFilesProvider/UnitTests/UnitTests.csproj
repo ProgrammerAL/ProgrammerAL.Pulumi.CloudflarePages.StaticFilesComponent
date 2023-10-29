@@ -29,10 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CloudflarePagesStaticFilesComponent\CloudflarePagesStaticFilesComponent.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="static-content\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

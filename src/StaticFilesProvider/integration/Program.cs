@@ -1,4 +1,4 @@
-﻿using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
+﻿using ProgrammerAL.PulumiComponent.CloudflarePages.PagesFilesUpload;
 
 using Pulumi;
 using Pulumi.Cloudflare;
@@ -28,11 +28,10 @@ return await Pulumi.Deployment.RunAsync(() =>
         Provider = cloudflareProvider
     });
 
-    var staticFiles = new UploadStaticFilesCommand($"{projectName}-files", new UploadStaticFilesCommandArgs
+    var staticFiles = new CloudflarePagesFilesUpload($"{projectName}-files", new CloudflarePagesFilesUploadArgs
     {
         ProjectName = pagesApp.Name,
-        UploadDirectory = "static-content 2",
-        WorkingDirectory = @"C:/GitHub/ProgrammerAl/ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent/",
+        UploadDirectory = "C:/GitHub/ProgrammerAl/ProgrammerAL.Pulumi.CloudflarePages.StaticFilesComponent/static-content 2",
         Branch = productionBranch,
     });
 

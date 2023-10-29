@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Exceptions;
+namespace ProgrammerAL.PulumiComponent.CloudflarePages.PagesFilesUpload.Exceptions;
 
 public class DirectoryDoesNotExistException : Exception
 {
     public DirectoryDoesNotExistException(string message)
         : base(message)
-    { 
+    {
     }
 }

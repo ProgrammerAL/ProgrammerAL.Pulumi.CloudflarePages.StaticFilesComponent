@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CloudflarePagesStaticFilesComponent\CloudflarePagesStaticFilesComponent.csproj" />
+	  <ProjectReference Include="..\Provider\Provider.csproj" />
 	</ItemGroup>
 
 </Project>

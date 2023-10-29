@@ -1,4 +1,4 @@
-﻿using ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent.Inputs;
+﻿using ProgrammerAL.PulumiComponent.CloudflarePages.PagesFilesUpload.Inputs;
 
 using Pulumi;
 
@@ -10,29 +10,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProgrammerAL.PulumiComponent.CloudflarePages.StaticFilesComponent;
+namespace ProgrammerAL.PulumiComponent.CloudflarePages.PagesFilesUpload;
 
-public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
+public class CloudflarePagesFilesUploadArgs : ResourceArgs
 {
+    internal const string PropertyProjectName = "projectname";
+    internal const string PropertyUploadDir = "uploaddir";
+    internal const string PropertyBranch = "branch";
+    internal const string PropertyEnvironment = "environment";
+    internal const string PropertyAuthentication = "authentication";
+    internal const string PropertyTriggers = "triggers";
+    internal const string PropertyWorkingDirectory = "workingDirectory";
+
+
     /// <summary>
     /// The name of the Cloudflare Pages project to upload files to.
     /// </summary>
-    [Input("projectname", required: true)]
+    [Input(PropertyProjectName, required: true)]
     public required Input<string> ProjectName { get; set; }
 
     /// <summary>
     /// The path to the directory with files in it we will upload
     /// </summary>
-    [Input("uploaddir", required: true)]
+    [Input(PropertyUploadDir, required: true)]
     public required Input<string> UploadDirectory { get; set; }
 
     /// <summary>
     /// The branch to upload to
     /// </summary>
-    [Input("branch")]
+    [Input(PropertyBranch)]
     public Input<string?>? Branch { get; set; }
 
-    [Input("environment")]
+    [Input(PropertyEnvironment)]
     private InputMap<string>? _environment;
 
     /// <summary>
@@ -48,24 +57,24 @@ public class UploadStaticFilesCommandArgs : global::Pulumi.ResourceArgs
     /// The authentication to use for running the command. 
     /// This is required if wrangler is not already logged in.
     /// </summary>
-    [Input("authentication")]
+    [Input(PropertyAuthentication)]
     public Input<WranglerAuthenticationInput>? Authentication { get; set; }
 
-    [Input("triggers")]
-    private InputList<object>? _triggers;
+    [Input(PropertyTriggers)]
+    private InputList<string>? _triggers;
 
     /// <summary>
     /// Trigger replacements on changes to this input.
     /// </summary>
-    public InputList<object> Triggers
+    public InputList<string> Triggers
     {
-        get => _triggers ?? (_triggers = new InputList<object>());
+        get => _triggers ?? (_triggers = new InputList<string>());
         set => _triggers = value;
     }
 
     /// <summary>
     /// The directory to run the command from. If the directory does not exist, then an error will be thrown.
     /// </summary>
-    [Input("workingDirectory")]
+    [Input(PropertyWorkingDirectory)]
     public Input<string>? WorkingDirectory { get; set; }
 }

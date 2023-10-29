@@ -5,6 +5,8 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<AssemblyName>ProgrammerAL.PulumiComponent.CloudflarePages.PagesFilesUpload</AssemblyName>
+		<RootNamespace>ProgrammerAL.PulumiComponent.CloudflarePages.PagesFilesUpload</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
